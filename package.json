@@ -1,0 +1,8 @@
+{
+  "name": "better-auth-steam-demo",
+  "private": true,
+  "scripts": {
+    "dev:server": "pnpm --filter server run start:dev",
+    "dev:web": "pnpm --filter web run dev"
+  }
+}

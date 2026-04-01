@@ -1,0 +1,15 @@
+{
+  "name": "better-auth-steam",
+  "version": "1.0.0",
+  "description": "A better-auth plugin for steam authentication.",
+  "main": "index.ts",
+  "module": "index.ts",
+  "types": "index.ts",
+  "peerDependencies": {
+    "better-auth": "^1.4"
+  },
+  "dependencies": {
+    "@better-fetch/fetch": "^1.1.21",
+    "zod": "^4.3.6"
+  }
+}
