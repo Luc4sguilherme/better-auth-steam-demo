@@ -8,8 +8,7 @@ export function EmailVerification({ email }: { email: string }) {
   const [timeToNextResend, setTimeToNextResend] = useState(30);
   const interval = useRef<NodeJS.Timeout>(undefined);
 
-  function startEmailVerificationCountdown(time = 30) {
-    setTimeToNextResend(time);
+  function startCountdownInterval() {
     clearInterval(interval.current);
 
     interval.current = setInterval(() => {
@@ -25,8 +24,14 @@ export function EmailVerification({ email }: { email: string }) {
     }, 1000);
   }
 
+  function startEmailVerificationCountdown(time = 30) {
+    setTimeToNextResend(time);
+    startCountdownInterval();
+  }
+
   useEffect(() => {
-    startEmailVerificationCountdown();
+    startCountdownInterval();
+    return () => clearInterval(interval.current);
   }, []);
 
   return (

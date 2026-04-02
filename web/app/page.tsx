@@ -5,11 +5,31 @@ import { ImpersonationIndicator } from "@/components/auth/impersonation-indicato
 import { Button } from "@/components/ui/button";
 import { authClient } from "@/lib/auth/auth-client";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useEffect, useState, Suspense } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { toast } from "sonner";
 
 export default function Home() {
+  return (
+    <Suspense>
+      <HomeContent />
+    </Suspense>
+  );
+}
+
+function HomeContent() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
   const [hasAdminPermission, setHasAdminPermission] = useState(false);
   const { data: session, isPending: loading } = authClient.useSession();
+
+  useEffect(() => {
+    const error = searchParams.get("error");
+    if (error) {
+      toast.error(`Authentication error: ${error.replaceAll("_", " ")}`);
+      router.push("/");
+    }
+  }, [searchParams, router]);
 
   useEffect(() => {
     authClient.admin.hasPermission({ permissions: { user: ["list"] } }).then(({ data }) => {

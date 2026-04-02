@@ -20,13 +20,13 @@ export function SteamIcon(props: ComponentProps<"svg">) {
           y2="512.329"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stop-color="#111D2E" />
-          <stop offset="0.212" stop-color="#051839" />
-          <stop offset="0.407" stop-color="#0A1B48" />
-          <stop offset="0.581" stop-color="#132E62" />
-          <stop offset="0.738" stop-color="#144B7E" />
-          <stop offset="0.873" stop-color="#136497" />
-          <stop offset="1" stop-color="#1387B8" />
+          <stop stopColor="#111D2E" />
+          <stop offset="0.212" stopColor="#051839" />
+          <stop offset="0.407" stopColor="#0A1B48" />
+          <stop offset="0.581" stopColor="#132E62" />
+          <stop offset="0.738" stopColor="#144B7E" />
+          <stop offset="0.873" stopColor="#136497" />
+          <stop offset="1" stopColor="#1387B8" />
         </linearGradient>
       </defs>
     </svg>

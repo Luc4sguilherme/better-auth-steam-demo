@@ -53,6 +53,7 @@ export function createBetterAuth(
       steamAuthPlugin({
         apiKey: configService.getOrThrow('STEAM_API_KEY'),
         accountLinking: true,
+        redirectURL: configService.getOrThrow('BETTER_TRUSTED_ORIGINS'),
       }),
     ],
     emailVerification: {

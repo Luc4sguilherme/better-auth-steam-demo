@@ -10,7 +10,6 @@ import { Button } from "@/components/ui/button";
 import { LoadingSwap } from "@/components/ui/loading-swap";
 import { authClient } from "@/lib/auth/auth-client";
 import { toast } from "sonner";
-import { NumberInput } from "@/components/ui/number-input";
 
 const signUpSchema = z.object({
   name: z.string().min(1),

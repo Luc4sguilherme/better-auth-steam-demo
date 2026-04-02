@@ -51,6 +51,8 @@ export interface SteamAuthPluginOptions {
   apiKey: string;
   /** Custom callback URL for the OpenID return_to parameter */
   callbackURL?: string;
+  /** The frontend base URL to redirect to after authentication (used as fallback for error and success redirects) */
+  redirectURL?: string;
   /** Whether to enable account linking. @default false */
   accountLinking?: boolean;
 }
@@ -165,8 +167,10 @@ export const steamAuthPlugin = (options: SteamAuthPluginOptions) =>
           const state = ctx.query.state;
           const cookieState = ctx.getCookie(STEAM_STATE_COOKIE);
 
+          const baseRedirect = options.redirectURL || ctx.context.baseURL;
+
           if (!state || !cookieState || state !== cookieState) {
-            throw ctx.redirect(`${ctx.context.baseURL}?error=csrf_validation_failed`);
+            throw ctx.redirect(`${baseRedirect}?error=csrf_validation_failed`);
           }
 
           ctx.setCookie(STEAM_STATE_COOKIE, "", {
@@ -182,7 +186,7 @@ export const steamAuthPlugin = (options: SteamAuthPluginOptions) =>
           );
 
           if (!verification || verification.expiresAt < new Date()) {
-            throw ctx.redirect(`${ctx.context.baseURL}?error=state_expired_or_invalid`);
+            throw ctx.redirect(`${baseRedirect}?error=state_expired_or_invalid`);
           }
 
           await ctx.context.internalAdapter.deleteVerificationByIdentifier(`${STEAM_STATE_PREFIX}:${state}`);
@@ -193,7 +197,7 @@ export const steamAuthPlugin = (options: SteamAuthPluginOptions) =>
             newUserCallbackURL?: string;
           };
 
-          const errorRedirect = errorCallbackURL || ctx.context.baseURL;
+          const errorRedirect = errorCallbackURL || baseRedirect;
 
           const openidParams: Record<string, string> = {};
           const openIdKeys = Object.keys(openIdQuerySchema.shape) as (keyof z.infer<typeof openIdQuerySchema>)[];
@@ -259,7 +263,7 @@ export const steamAuthPlugin = (options: SteamAuthPluginOptions) =>
                 throw ctx.redirect(`${errorRedirect}?error=account_already_linked_to_different_user`);
               }
 
-              throw ctx.redirect(callbackURL || ctx.context.baseURL);
+              throw ctx.redirect(callbackURL || baseRedirect);
             }
 
             const newAccount = await ctx.context.internalAdapter.createAccount({
@@ -272,7 +276,7 @@ export const steamAuthPlugin = (options: SteamAuthPluginOptions) =>
               throw ctx.redirect(`${errorRedirect}?error=account_creation_failed`);
             }
 
-            throw ctx.redirect(callbackURL || ctx.context.baseURL);
+            throw ctx.redirect(callbackURL || baseRedirect);
           }
 
           let user: User | null = null;
@@ -308,8 +312,8 @@ export const steamAuthPlugin = (options: SteamAuthPluginOptions) =>
           await setSessionCookie(ctx, { session, user });
 
           const redirectURL = isNewUser
-            ? newUserCallbackURL || callbackURL || ctx.context.baseURL
-            : callbackURL || ctx.context.baseURL;
+            ? newUserCallbackURL || callbackURL || baseRedirect
+            : callbackURL || baseRedirect;
 
           throw ctx.redirect(redirectURL);
         },
